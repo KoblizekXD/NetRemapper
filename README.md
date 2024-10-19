@@ -30,4 +30,21 @@ obf   intermediary   named
 c  seklfj   creator  NamedCreator
 # In order to define a field/method translation, you need to be inside class definition
 f  coklrkjf create   NamedCreate
-```
+```  
+
+## Goals & Targets  
+
+- [x] Field Remapping
+- [ ] Method Remapping
+	- [ ] Method Body Remapping
+	- [x] Method Signature Remapping
+- [ ] Class Remapping
+- [ ] Attribute Remapping
+- [ ] Assembly Remapping
+	- Allow to remap the whole assembly - experimental
+- [ ] JSON Mapping format
+
+## License & Contribution  
+
+Project is licensed under MIT License.  
+For contribution, please create an Issue & Pull Request. Contributions are always welcome!

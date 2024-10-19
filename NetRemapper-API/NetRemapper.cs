@@ -7,8 +7,10 @@ namespace NetRemapper
     {
         public AssemblyDefinition Assembly { get; private set; } = AssemblyDefinition.ReadAssembly(assemblyPath);
         public Mappings? Mappings { get; private set; } = MappingsReader.ReadMappings(mappings);
+        public string DefaultNamespace { get; private set; } = "obf";
+        public string TargetNamespace { get; private set; } = "named";
 
-        public void Remap(string from, string target)
+        public void Remap(string output)
         {
             foreach (TypeDefinition type in Assembly.MainModule.Types)
             {
@@ -41,13 +43,13 @@ namespace NetRemapper
                     }
                 }
             }
-            Assembly.Write("C:\\Users\\Koblizkac\\Desktop\\New.exe");
+            Assembly.Write(output);
         }
 
         public static void Main()
         {
             NetRemapper remapper = new("C:\\Users\\Koblizkac\\Desktop\\Main.exe", "C:\\Users\\Koblizkac\\Documents\\Dev\\CXX\\NetRemapper\\NetRemapper-API\\mappings.netmap");
-            remapper.Remap("obf", "named");
+            remapper.Remap("C:\\Users\\Koblizkac\\Desktop\\New.exe");
         }
     }
 }

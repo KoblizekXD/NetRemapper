@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace NetRemapper
 {
@@ -70,13 +71,13 @@ namespace NetRemapper
                         {
                             mappings.TypeDefinitions.Add(currentTypeDefinition);
                         }
-                        currentTypeDefinition = new(splitted.Skip(1).ToArray());
+                        currentTypeDefinition = new([.. mappings.Namespaces], splitted.Skip(1).ToArray());
                     } else if (splitted[0] == "f")
                     {
-                        currentTypeDefinition?.FieldDefinitions.Add(new(splitted.Skip(1).ToArray()));
+                        currentTypeDefinition?.FieldDefinitions.Add(new([.. mappings.Namespaces], splitted.Skip(1).ToArray()));
                     } else if (splitted[0] == "m")
                     {
-                        currentTypeDefinition?.MethodDefinitions.Add(new(splitted.Skip(1).ToArray()));
+                        currentTypeDefinition?.MethodDefinitions.Add(new([.. mappings.Namespaces], splitted.Skip(1).ToArray()));
                     }
                     else continue;
                 }
@@ -96,17 +97,32 @@ namespace NetRemapper
         public MappingsFormat Format { get; private set; } = format;
         public List<string> Namespaces { get; internal set; } = [];
         public List<TypeDefinitionEntry> TypeDefinitions { get; internal set; } = [];
+
+        public TypeDefinitionEntry? GetType(string name, string ns)
+        {
+            return TypeDefinitions.FirstOrDefault(type => type.Names[ns] == name);
+        }
     }
 
-    public class GenericMappingEntry(string[] names)
+    public class GenericMappingEntry
     {
-        public string[] Names { get; } = names;
+        public Dictionary<string, string> Names { get; } = [];
+
+        public GenericMappingEntry(string[] namespaces, string[] names)
+        {
+            if (namespaces.Length != names.Length) throw new ArgumentException("Namespaces and names arrays must have the same length.");
+
+            for (int i = 0; i < namespaces.Length; i++)
+            {
+                Names.Add(namespaces[i], names[i]);
+            }
+        }
     }
 
-    public class MethodDefinitionEntry(string[] names) : GenericMappingEntry(names);
-    public class FieldDefinitionEntry(string[] names) : GenericMappingEntry(names);
+    public class MethodDefinitionEntry(string[] namespaces, string[] names) : GenericMappingEntry(namespaces, names);
+    public class FieldDefinitionEntry(string[] namespaces, string[] names) : GenericMappingEntry(namespaces, names);
 
-    public class TypeDefinitionEntry(string[] names) : GenericMappingEntry(names)
+    public class TypeDefinitionEntry(string[] namespaces, string[] names) : GenericMappingEntry(namespaces, names)
     {
         public List<MethodDefinitionEntry> MethodDefinitions { get; set; } = [];
         public List<FieldDefinitionEntry> FieldDefinitions { get; set; } = [];

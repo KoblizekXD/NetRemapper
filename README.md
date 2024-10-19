@@ -3,6 +3,9 @@
 C# IL remapper, utilizing Mono.Cecil package.
 Inspired by Fabric's Tiny Remapper.
 
+> [!WARNING]
+> This is very early state of development, there are no releases so far, and some things might be done a bit differently than they are supposed to be done.
+
 ## Mappings Format  
 
 NetRemapper uses a custom mappings format called "netmap".

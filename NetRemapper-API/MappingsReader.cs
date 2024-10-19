@@ -34,6 +34,9 @@ namespace NetRemapper
                 lines = File.ReadAllLines(mappingsPath);
             }
             catch (Exception e) { throw new IOException("Failed to read mappings file.", e); };
+
+            lines = lines.Where(line => !(line.StartsWith('#') || line.StartsWith("//"))).ToArray();
+
             TypeDefinitionEntry? currentTypeDefinition = null;
             for (int i = 0; i < lines.Length; i++)
             {

@@ -11,14 +11,14 @@
             writer.WriteLine(string.Join('\t', mappings.Namespaces));
             mappings.TypeDefinitions.ForEach(entry =>
             {
-                writer.WriteLine($"c\t{string.Join('\t', entry.Names)}");
+                writer.WriteLine($"c\t{string.Join('\t', entry.Names.Values)}");
                 entry.MethodDefinitions.ForEach(method =>
                 {
-                    writer.WriteLine($"m\t{string.Join('\t', method.Names)}");
+                    writer.WriteLine($"m\t{string.Join('\t', method.Names.Values)}");
                 });
                 entry.FieldDefinitions.ForEach(field =>
                 {
-                    writer.WriteLine($"f\t{string.Join('\t', field.Names)}");
+                    writer.WriteLine($"f\t{string.Join('\t', field.Names.Values)}");
                 });
             });
 

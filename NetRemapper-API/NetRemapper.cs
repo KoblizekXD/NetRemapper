@@ -46,10 +46,18 @@ namespace NetRemapper
             Assembly.Write(output);
         }
 
+        public void ExportMappings(string output)
+        {
+            if (Mappings is null) throw new Exception("Mappings are not loaded.");
+
+            MappingsWriter.Write(Mappings, output);
+        }
+
         public static void Main()
         {
             NetRemapper remapper = new("C:\\Users\\Koblizkac\\Desktop\\Main.exe", "C:\\Users\\Koblizkac\\Documents\\Dev\\CXX\\NetRemapper\\NetRemapper-API\\mappings.netmap");
-            remapper.Remap("C:\\Users\\Koblizkac\\Desktop\\New.exe");
+
+            var m = MappingsReader.ReadMappings("./maps.netmap");
         }
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
-namespace NetRemapper
+﻿namespace NetRemapper
 {
     public static class MappingsReader
     {
@@ -95,12 +88,31 @@ namespace NetRemapper
     public class Mappings(MappingsFormat format)
     {
         public MappingsFormat Format { get; private set; } = format;
-        public List<string> Namespaces { get; internal set; } = [];
+        public string[] Namespaces { get; internal set; } = [];
         public List<TypeDefinitionEntry> TypeDefinitions { get; internal set; } = [];
 
+        /// <param name="name">The name symbol</param>
+        /// <param name="ns">The namespace to look in</param>
+        /// <returns>The first entry which contains name in the specified namespace</returns>
         public TypeDefinitionEntry? GetType(string name, string ns)
         {
             return TypeDefinitions.FirstOrDefault(type => type.Names[ns] == name);
+        }
+
+        /// <param name="name">The name symbol</param>
+        /// <param name="ns">The namespace to look in</param>
+        /// <returns>The first entry which contains name in the specified namespace</returns>
+        public MethodDefinitionEntry? GetMethod(string name, string ns)
+        {
+            return TypeDefinitions.SelectMany(type => type.MethodDefinitions).FirstOrDefault(method => method.Names[ns] == name);
+        }
+
+        /// <param name="name">The name symbol</param>
+        /// <param name="ns">The namespace to look in</param>
+        /// <returns>The first entry which contains name in the specified namespace</returns>
+        public FieldDefinitionEntry? GetField(string name, string ns)
+        {
+            return TypeDefinitions.SelectMany(type => type.FieldDefinitions).FirstOrDefault(field => field.Names[ns] == name);
         }
     }
 

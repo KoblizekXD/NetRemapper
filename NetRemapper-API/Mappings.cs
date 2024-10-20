@@ -43,7 +43,7 @@ namespace NetRemapper
 
         public GenericMappingEntry(string[] namespaces, string[] names)
         {
-            if (namespaces.Length != names.Length) throw new ArgumentException("Namespaces and names arrays must have the same length.");
+            if (namespaces.Length != names.Length) throw new ArgumentException("Namespaces and names must have the same length. The mappings might be incorrectly formatted.");
 
             for (int i = 0; i < namespaces.Length; i++)
             {

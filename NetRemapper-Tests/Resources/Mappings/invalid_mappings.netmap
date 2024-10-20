@@ -1,0 +1,4 @@
+netmap	V1
+obf		intermediarynamed
+c	Creator		creator		NamedCreator
+f	Create	create	NamedCreate

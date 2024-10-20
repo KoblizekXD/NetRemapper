@@ -55,16 +55,17 @@ namespace NetRemapper
 
                 foreach (var instruction in method.Body.Instructions)
                 {
-                    
                     if (instruction.OpCode == OpCodes.Call || instruction.OpCode == OpCodes.Callvirt)
                     {
                         MethodReference? calledMethod = instruction.Operand as MethodReference;
 
-                        if (calledMethod is not null && calledMethod.Name == "Create")
+                        if (calledMethod is not null)
                         {
-                            calledMethod.Name = "NamedCreate";
-
-                            processor.Replace(instruction, processor.Create(instruction.OpCode, calledMethod));
+                            if (Mappings.GetMethod(calledMethod.Name, DefaultNamespace) is MethodDefinitionEntry e)
+                            {
+                                calledMethod.Name = e.Names[TargetNamespace];
+                                processor.Replace(instruction, processor.Create(instruction.OpCode, calledMethod));
+                            }
                         }
                     }
                 }

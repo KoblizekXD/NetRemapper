@@ -78,10 +78,5 @@ namespace NetRemapper
 
             MappingsWriter.Write(Mappings, output);
         }
-
-        public static void Main()
-        {
-            var m = MappingsReader.ReadMappings("./maps.netmap");
-        }
     }
 }

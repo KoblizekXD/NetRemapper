@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NetRemapper-CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    }
+  }
+}

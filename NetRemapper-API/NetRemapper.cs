@@ -3,12 +3,26 @@ using Mono.Cecil.Cil;
 
 namespace NetRemapper
 {
-    public class NetRemapper(string assemblyPath, string? mappings)
+    public class NetRemapper
     {
-        public AssemblyDefinition Assembly { get; private set; } = AssemblyDefinition.ReadAssembly(assemblyPath);
-        public Mappings? Mappings { get; private set; } = MappingsReader.ReadMappings(mappings);
+        public NetRemapper(string assemblyPath, string? mappings)
+        {
+            Assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
+            Mappings = MappingsReader.ReadMappings(mappings);
+        }
+
+        public NetRemapper(Stream stream, string? mappings)
+        {
+            Assembly = AssemblyDefinition.ReadAssembly(stream);
+            Mappings = MappingsReader.ReadMappings(mappings);
+        }
+
+        public AssemblyDefinition Assembly { get; private set; }
+        public Mappings? Mappings { get; private set; }
         public string DefaultNamespace { get; private set; } = "obf";
         public string TargetNamespace { get; private set; } = "named";
+
+        public bool MappingsLoaded => Mappings is not null;
 
         /// <summary>
         ///     Remaps the <see cref="assemblyPath"/> according to the loaded mappings(<see cref="mappings"/>).

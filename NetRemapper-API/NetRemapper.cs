@@ -50,6 +50,8 @@ namespace NetRemapper
                     ModifyMethod(method);
                 }
             }
+            #pragma warning disable CS8604 // Possible null reference argument.
+            Directory.CreateDirectory(Path.GetDirectoryName(output));
             Assembly.Write(output);
         }
 
@@ -69,17 +71,27 @@ namespace NetRemapper
 
                 foreach (var instruction in method.Body.Instructions)
                 {
-                    if (instruction.OpCode == OpCodes.Call || instruction.OpCode == OpCodes.Callvirt)
+                    if (instruction.Operand is MemberReference member)
                     {
-                        MethodReference? calledMethod = instruction.Operand as MethodReference;
-
-                        if (calledMethod is not null)
+                        if (Mappings.GetType(member.DeclaringType.Name, DefaultNamespace) is TypeDefinitionEntry typeDefinition)
                         {
-                            if (Mappings.GetMethod(calledMethod.Name, DefaultNamespace) is MethodDefinitionEntry e)
-                            {
-                                calledMethod.Name = e.Names[TargetNamespace];
-                                processor.Replace(instruction, processor.Create(instruction.OpCode, calledMethod));
-                            }
+                            member.DeclaringType.Name = typeDefinition.Names[TargetNamespace];
+                        }
+                    }
+
+                    if (instruction.Operand is MethodReference mRef)
+                    {
+                        if (Mappings.GetMethod(mRef.Name, DefaultNamespace) is MethodDefinitionEntry e)
+                        {
+                            mRef.Name = e.Names[TargetNamespace];
+                            processor.Replace(instruction, processor.Create(instruction.OpCode, mRef));
+                        }
+                    } else if (instruction.Operand is FieldReference fRef)
+                    {
+                        if (Mappings.GetField(fRef.Name, DefaultNamespace) is FieldDefinitionEntry e)
+                        {
+                            fRef.Name = e.Names[TargetNamespace];
+                            processor.Replace(instruction, processor.Create(instruction.OpCode, fRef));
                         }
                     }
                 }

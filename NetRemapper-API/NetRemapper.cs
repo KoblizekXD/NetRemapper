@@ -81,14 +81,14 @@ namespace NetRemapper
 
                     if (instruction.Operand is MethodReference mRef)
                     {
-                        if (Mappings.GetMethod(mRef.Name, DefaultNamespace) is MethodDefinitionEntry e)
+                        if (Mappings.GetMethod(mRef.Name, DefaultNamespace, mRef.Name, TargetNamespace) is MethodDefinitionEntry e)
                         {
                             mRef.Name = e.Names[TargetNamespace];
                             processor.Replace(instruction, processor.Create(instruction.OpCode, mRef));
                         }
                     } else if (instruction.Operand is FieldReference fRef)
                     {
-                        if (Mappings.GetField(fRef.Name, DefaultNamespace) is FieldDefinitionEntry e)
+                        if (Mappings.GetField(fRef.Name, DefaultNamespace, fRef.Name, TargetNamespace) is FieldDefinitionEntry e)
                         {
                             fRef.Name = e.Names[TargetNamespace];
                             processor.Replace(instruction, processor.Create(instruction.OpCode, fRef));

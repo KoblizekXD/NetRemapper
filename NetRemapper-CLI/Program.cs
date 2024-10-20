@@ -1,6 +1,8 @@
 ﻿using CommandLine;
 using NetRemapper;
 
+namespace NetRemapper.CLI;
+
 class Program
 {
 

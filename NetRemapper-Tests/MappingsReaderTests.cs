@@ -27,5 +27,31 @@ namespace NetRemapper.Tests
                 MappingsReader.ReadMappings("Resources/Mappings/invalid_mappings_2.netmap");
             });
         }
+
+        [Fact]
+        public void TestFieldLookup()
+        {
+            Mappings? mappings = MappingsReader.ReadMappings("Resources/Mappings/valid_mappings.netmap");
+
+            Assert.NotNull(mappings);
+
+            Assert.NotNull(mappings.GetType("Creator", "obf"));
+            Assert.NotNull(mappings.GetField("Create", "obf", "Creator", "obf"));
+            Assert.Null(mappings.GetField("Create", "named", "Creator", "obf2"));
+            Assert.Null(mappings.GetField("Create", "obf", "Creator", "named"));
+        }
+
+        [Fact]
+        public void TestMethodLookup()
+        {
+            Mappings? mappings = MappingsReader.ReadMappings("Resources/Mappings/valid_mappings.netmap");
+
+            Assert.NotNull(mappings);
+
+            Assert.NotNull(mappings.GetType("Creator", "obf"));
+            Assert.NotNull(mappings.GetMethod("Modify", "obf", "Creator", "obf"));
+            Assert.Null(mappings.GetField("Modify", "named", "Creator", "obf2"));
+            Assert.Null(mappings.GetField("Modify", "obf", "Creator", "named"));
+        }
     }
 }

@@ -11,6 +11,7 @@
         /// <returns>The first entry which contains name in the specified namespace</returns>
         public TypeDefinitionEntry? GetType(string name, string ns)
         {
+            if (!Namespaces.Contains(ns)) return null;
             return TypeDefinitions.FirstOrDefault(type => type.Names[ns] == name);
         }
 
@@ -19,6 +20,7 @@
         /// <returns>The first entry which contains name in the specified namespace</returns>
         public MethodDefinitionEntry? GetMethod(string name, string ns)
         {
+            if (!Namespaces.Contains(ns)) return null;
             return TypeDefinitions.SelectMany(type => type.MethodDefinitions).FirstOrDefault(method => method.Names[ns] == name);
         }
 
@@ -27,7 +29,35 @@
         /// <returns>The first entry which contains name in the specified namespace</returns>
         public FieldDefinitionEntry? GetField(string name, string ns)
         {
+            if (!Namespaces.Contains(ns)) return null;
             return TypeDefinitions.SelectMany(type => type.FieldDefinitions).FirstOrDefault(field => field.Names[ns] == name);
+        }
+
+        /// <summary>
+        /// Finds a field corresponding to specified class in the mappings
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="ns">The namespace the name is located in</param>
+        /// <param name="type">The type to look for the field in</param>
+        /// <param name="typeNs">The namespace the <see cref="type"/> name is in</param>
+        /// <returns>The entry corresponding to parameters or null, if none was found</returns>
+        public FieldDefinitionEntry? GetField(string name, string ns, string type, string typeNs)
+        {
+            if (!Namespaces.Contains(ns) || !Namespaces.Contains(typeNs)) return null;
+            return GetType(type, typeNs)?.FieldDefinitions.FirstOrDefault(field => field.Names[ns] == name);
+        }
+
+        /// <summary>
+        /// Finds a method corresponding to specified class in the mappings
+        /// </summary>
+        /// <param name="name">The name of the method</param>
+        /// <param name="ns">The namespace the name is located in</param>
+        /// <param name="type">The type to look for the method in</param>
+        /// <param name="typeNs">The namespace the <see cref="type"/> name is in</param>
+        /// <returns>The entry corresponding to parameters or null, if none was found</returns>
+        public MethodDefinitionEntry? GetMethod(string name, string ns, string type, string typeNs)
+        {
+            return GetType(type, typeNs)?.MethodDefinitions.FirstOrDefault(method => method.Names[ns] == name);
         }
     }
 

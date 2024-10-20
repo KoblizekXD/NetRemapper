@@ -2,3 +2,4 @@ netmap	V1
 obf		intermediary	named
 c	Creator		creator		NamedCreator
 f	Create	create	NamedCreate
+m	Modify	modify	NamedModify

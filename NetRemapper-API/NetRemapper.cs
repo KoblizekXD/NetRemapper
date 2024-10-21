@@ -9,22 +9,30 @@ namespace NetRemapper
         public NetRemapper(string assemblyPath, string? mappings)
         {
             Assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
+            Module = Assembly.MainModule;
             Mappings = MappingsReader.ReadMappings(mappings);
         }
 
         public NetRemapper(Stream stream, string? mappings)
         {
             Assembly = AssemblyDefinition.ReadAssembly(stream);
+            Module = Assembly.MainModule;
             Mappings = MappingsReader.ReadMappings(mappings);
         }
 
         public AssemblyDefinition Assembly { get; private set; }
+        public ModuleDefinition Module { get; set; }
         public Mappings? Mappings { get; private set; }
         public string DefaultNamespace { get; set; } = "obf";
         public string TargetNamespace { get; set; } = "named";
         public bool Verbose { get; set; } = false;
 
         public bool MappingsLoaded => Mappings is not null;
+
+        public ModuleDefinition? GetModule(string name)
+        {
+            return Assembly.Modules.FirstOrDefault(m => m.Name == name);
+        }
 
         /// <summary>
         ///     Remaps the <see cref="assemblyPath"/> according to the loaded mappings(<see cref="mappings"/>).
@@ -37,7 +45,7 @@ namespace NetRemapper
         {
             if (Mappings is null) throw new Exception("Mappings are not loaded.");
 
-            foreach (TypeDefinition type in Assembly.MainModule.Types)
+            foreach (TypeDefinition type in Module.Types)
             {
                 foreach (var property in type.Properties)
                 {
@@ -63,7 +71,7 @@ namespace NetRemapper
                 }
             }
 
-            foreach (TypeDefinition type in Assembly.MainModule.Types)
+            foreach (TypeDefinition type in Module.Types)
             {
                 if (Mappings.GetType(type.Name, DefaultNamespace) is TypeDefinitionEntry entry)
                 {

@@ -38,7 +38,8 @@ f  coklrkjf create   NamedCreate
 - [ ] Method Remapping
 	- [ ] Method Body Remapping
 	- [x] Method Signature Remapping
-- [ ] Class Remapping
+- [x] Class Remapping
+- [ ] Property Remapping
 - [ ] Attribute Remapping
 - [ ] Assembly Remapping
 	- Allow to remap the whole assembly - experimental

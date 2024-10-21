@@ -59,6 +59,19 @@
         {
             return GetType(type, typeNs)?.MethodDefinitions.FirstOrDefault(method => method.Names[ns] == name);
         }
+
+        /// <summary>
+        /// Finds a property corresponding to specified class in the mappings
+        /// </summary>
+        /// <param name="name">The name of the property</param>
+        /// <param name="ns">The namespace the name is located in</param>
+        /// <param name="type">The type to look for the method in</param>
+        /// <param name="typeNs">The namespace the <see cref="type"/> name is in</param>
+        /// <returns>The entry corresponding to parameters or null, if none was found</returns>
+        public PropertyDefinitionEntry? GetProperty(string name, string ns, string type, string typeNs)
+        {
+            return GetType(type, typeNs)?.PropertyDefinitions.FirstOrDefault(method => method.Names[ns] == name);
+        }
     }
 
     public class GenericMappingEntry
@@ -74,15 +87,19 @@
                 Names.Add(namespaces[i], names[i]);
             }
         }
+
+        public string this[string ns] => Names[ns];
     }
 
     public class MethodDefinitionEntry(string[] namespaces, string[] names) : GenericMappingEntry(namespaces, names);
     public class FieldDefinitionEntry(string[] namespaces, string[] names) : GenericMappingEntry(namespaces, names);
+    public class PropertyDefinitionEntry(string[] namespaces, string[] names) : GenericMappingEntry(namespaces, names);
 
     public class TypeDefinitionEntry(string[] namespaces, string[] names) : GenericMappingEntry(namespaces, names)
     {
         public List<MethodDefinitionEntry> MethodDefinitions { get; set; } = [];
         public List<FieldDefinitionEntry> FieldDefinitions { get; set; } = [];
+        public List<PropertyDefinitionEntry> PropertyDefinitions { get; set; } = [];
     }
 
     public enum MappingsFormat

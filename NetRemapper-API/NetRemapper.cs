@@ -1,5 +1,6 @@
 ﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
+using System.Reflection;
 
 namespace NetRemapper
 {
@@ -19,8 +20,9 @@ namespace NetRemapper
 
         public AssemblyDefinition Assembly { get; private set; }
         public Mappings? Mappings { get; private set; }
-        public string DefaultNamespace { get; private set; } = "obf";
-        public string TargetNamespace { get; private set; } = "named";
+        public string DefaultNamespace { get; set; } = "obf";
+        public string TargetNamespace { get; set; } = "named";
+        public bool Verbose { get; set; } = false;
 
         public bool MappingsLoaded => Mappings is not null;
 
@@ -37,10 +39,20 @@ namespace NetRemapper
 
             foreach (TypeDefinition type in Assembly.MainModule.Types)
             {
+                foreach (var property in type.Properties)
+                {
+                    if (Mappings.GetProperty(property.Name, DefaultNamespace, type.Name, DefaultNamespace) is PropertyDefinitionEntry entry)
+                    {
+                        WriteIfVerbose($"Remapping property {property.Name} -> {entry[TargetNamespace]}");
+                        property.Name = entry.Names[TargetNamespace];
+                    }
+                }
+
                 foreach (var field in type.Fields)
                 {
-                    if (Mappings.GetField(field.Name, DefaultNamespace) is FieldDefinitionEntry entry)
+                    if (Mappings.GetField(field.Name, DefaultNamespace, type.Name, DefaultNamespace) is FieldDefinitionEntry entry)
                     {
+                        WriteIfVerbose($"Remapping field {field.Name} -> {entry[TargetNamespace]}");
                         field.Name = entry.Names[TargetNamespace];
                     }
                 }
@@ -50,9 +62,31 @@ namespace NetRemapper
                     ModifyMethod(method);
                 }
             }
-            #pragma warning disable CS8604 // Possible null reference argument.
+
+            foreach (TypeDefinition type in Assembly.MainModule.Types)
+            {
+                if (Mappings.GetType(type.Name, DefaultNamespace) is TypeDefinitionEntry entry)
+                {
+                    WriteIfVerbose($"Remapping type {type.Name} -> {entry[TargetNamespace]}");
+                    type.Name = entry.Names[TargetNamespace];
+                }
+            
+            }
+
+#pragma warning disable CS8604 // Possible null reference argument.
             Directory.CreateDirectory(Path.GetDirectoryName(output));
             Assembly.Write(output);
+        }
+
+        void WriteIfVerbose(string message)
+        {
+            if (Verbose)
+            {
+                ConsoleColor originalColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("[NetRemapper] " + message);
+                Console.ForegroundColor = originalColor;
+            }
         }
 
         #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -62,7 +96,8 @@ namespace NetRemapper
 
             if (entry is not null)
             {
-                method.Name = entry.Names[TargetNamespace];
+                WriteIfVerbose($"Remapping method {method.Name} -> {entry[TargetNamespace]}");
+                method.Name = entry[TargetNamespace];
             }
 
             if (method.HasBody)
@@ -75,7 +110,9 @@ namespace NetRemapper
                     {
                         if (Mappings.GetType(member.DeclaringType.Name, DefaultNamespace) is TypeDefinitionEntry typeDefinition)
                         {
-                            member.DeclaringType.Name = typeDefinition.Names[TargetNamespace];
+                            WriteIfVerbose($"Remapping reference to {member.Name}'s type {member.DeclaringType.Name} -> {typeDefinition[TargetNamespace]}");
+                            member.DeclaringType = new(member.DeclaringType.Namespace, typeDefinition.Names[TargetNamespace], member.DeclaringType.Module, member.DeclaringType.Scope);
+                            // member.DeclaringType.Name = typeDefinition.Names[TargetNamespace];
                         }
                     }
 
@@ -83,6 +120,7 @@ namespace NetRemapper
                     {
                         if (Mappings.GetMethod(mRef.Name, DefaultNamespace, mRef.Name, TargetNamespace) is MethodDefinitionEntry e)
                         {
+                            WriteIfVerbose($"Remapping method reference {mRef.Name} -> {e[TargetNamespace]}");
                             mRef.Name = e.Names[TargetNamespace];
                             processor.Replace(instruction, processor.Create(instruction.OpCode, mRef));
                         }
@@ -90,6 +128,7 @@ namespace NetRemapper
                     {
                         if (Mappings.GetField(fRef.Name, DefaultNamespace, fRef.Name, TargetNamespace) is FieldDefinitionEntry e)
                         {
+                            WriteIfVerbose($"Remapping field reference {fRef.Name} -> {e[TargetNamespace]}");
                             fRef.Name = e.Names[TargetNamespace];
                             processor.Replace(instruction, processor.Create(instruction.OpCode, fRef));
                         }

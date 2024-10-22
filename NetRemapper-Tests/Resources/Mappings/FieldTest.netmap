@@ -1,0 +1,6 @@
+# forsource:FieldTest.cs
+netmap	V1
+obf		named
+c	Testing		Testing
+f	i	renamedI
+f	staticI		renamedStaticI

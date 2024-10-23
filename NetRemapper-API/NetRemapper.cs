@@ -107,10 +107,7 @@ public class NetRemapper
 
             foreach (var instruction in method.Body.Instructions)
             {
-                if (instruction.Operand is MemberReference member)
-                {
-                    RemapMemberReference(member);
-                }
+                if (instruction.Operand is MemberReference member) RemapMemberReference(member);
 
                 switch (instruction.Operand)
                 {

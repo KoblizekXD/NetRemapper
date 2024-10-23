@@ -47,6 +47,12 @@ namespace NetRemapper
 
             foreach (TypeDefinition type in Module.Types)
             {
+                if (Mappings.GetType(type.Name, DefaultNamespace) is TypeDefinitionEntry entry1)
+                {
+                    WriteIfVerbose($"Remapping type {type.Name} -> {entry1[TargetNamespace]}");
+                    type.Name = entry1.Names[TargetNamespace];
+                }
+
                 foreach (var property in type.Properties)
                 {
                     if (Mappings.GetProperty(property.Name, DefaultNamespace, type.Name, DefaultNamespace) is PropertyDefinitionEntry entry)
@@ -69,16 +75,6 @@ namespace NetRemapper
                 {
                     ModifyMethod(method);
                 }
-            }
-
-            foreach (TypeDefinition type in Module.Types)
-            {
-                if (Mappings.GetType(type.Name, DefaultNamespace) is TypeDefinitionEntry entry)
-                {
-                    WriteIfVerbose($"Remapping type {type.Name} -> {entry[TargetNamespace]}");
-                    type.Name = entry.Names[TargetNamespace];
-                }
-            
             }
 
 #pragma warning disable CS8604 // Possible null reference argument.

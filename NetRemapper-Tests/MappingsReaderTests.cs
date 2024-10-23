@@ -22,7 +22,7 @@ namespace NetRemapper.Tests
             });
 
             // Invalid format
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<IOException>(() =>
             {
                 MappingsReader.ReadMappings("Resources/Mappings/invalid_mappings_2.netmap");
             });

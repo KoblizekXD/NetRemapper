@@ -5,14 +5,14 @@ namespace NetRemapper;
 
 public class NetRemapper
 {
-    public NetRemapper(string assemblyPath, string? mappings)
+    public NetRemapper(string assemblyPath, string mappings)
     {
         Assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
         Module = Assembly.MainModule;
         Mappings = MappingsReader.ReadMappings(mappings);
     }
 
-    public NetRemapper(Stream stream, string? mappings)
+    public NetRemapper(Stream stream, string mappings)
     {
         Assembly = AssemblyDefinition.ReadAssembly(stream);
         Module = Assembly.MainModule;

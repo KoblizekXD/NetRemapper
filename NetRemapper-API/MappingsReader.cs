@@ -60,6 +60,10 @@ public static class MappingsReader
                             currentTypeDefinition?.MethodDefinitions.Add(
                                 new MethodDefinitionEntry([.. mappings.Namespaces], split.Skip(1).ToArray()));
                             break;
+                        case "p":
+                            currentTypeDefinition?.PropertyDefinitions.Add(
+                                new PropertyDefinitionEntry([.. mappings.Namespaces], split.Skip(1).ToArray()));
+                            break;
                     }
                     break;
                 }

@@ -35,12 +35,13 @@ f  coklrkjf create   NamedCreate
 ## Goals & Targets  
 
 - [x] Field Remapping
-- [ ] Method Remapping
-	- [ ] Method Body Remapping
+- [x] Method Remapping
+	- [x] Method Body Remapping
 	- [x] Method Signature Remapping
 - [x] Class Remapping
-- [ ] Property Remapping
+- [x] Property Remapping
 - [ ] Attribute Remapping
+- [ ] Generics
 - [ ] Assembly Remapping
 	- Allow to remap the whole assembly - experimental
 - [ ] JSON Mapping format

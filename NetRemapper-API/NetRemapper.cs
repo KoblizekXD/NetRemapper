@@ -98,6 +98,14 @@ public class NetRemapper
             WriteIfVerbose($"Remapping method {method.Name} -> {entry[TargetNamespace]}");
             method.Name = entry[TargetNamespace];
         }
+        
+        foreach (var parameter in method.Parameters)
+        {
+            if (Mappings!.GetType(parameter.ParameterType.Name, DefaultNamespace) is not { } typeDefinition) return;
+        
+            WriteIfVerbose($"Remapping reference to parameter {parameter.Name}'s type {parameter.ParameterType.Name} -> {typeDefinition[TargetNamespace]}");
+            parameter.ParameterType = new TypeReference(parameter.ParameterType.Namespace, typeDefinition.Names[TargetNamespace], parameter.ParameterType.Module, parameter.ParameterType.Scope);
+        }
 
         if (method.HasBody)
         {
@@ -125,7 +133,7 @@ public class NetRemapper
         if (Mappings!.GetType(member.DeclaringType.Name, DefaultNamespace) is not { } typeDefinition) return;
         
         WriteIfVerbose($"Remapping reference to {member.Name}'s type {member.DeclaringType.Name} -> {typeDefinition[TargetNamespace]}");
-        member.DeclaringType = new(member.DeclaringType.Namespace, typeDefinition.Names[TargetNamespace], member.DeclaringType.Module, member.DeclaringType.Scope);
+        member.DeclaringType = new TypeReference(member.DeclaringType.Namespace, typeDefinition.Names[TargetNamespace], member.DeclaringType.Module, member.DeclaringType.Scope);
     }
 
     private void RemapMethodReference(ILProcessor processor, Instruction instruction, MethodReference mRef)
